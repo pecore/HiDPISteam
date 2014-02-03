@@ -25,6 +25,26 @@ namespace ConsoleApplication1
                     // If it's a group, skip it.
                     if (propValue.Type != vguiLexer.STRING)
                         break;
+                    // There are layout name specific sub properties that need to be multiplied, too.
+                    if (propName.Text.Contains("."))
+                    {
+                        string name = propName.Text;
+                        string prop = name.Substring(name.LastIndexOf('.') + 1);
+                        switch (prop)
+                        {
+                            case "ImageWidth":
+                            case "ImageHeight":
+                            case "LockedImageBorder":
+                            case "HorizontalSpacing":
+                            case "VerticalSpacing":
+                            case "ExtraHorizontalSpacing":
+                            case "ExtraVerticalSpacing":
+                            case "EverythingExtraSpacing":
+                            case "ImageAreaSpacing":
+                                propValue.Token.Text = Utils.Quote(TryScale(Utils.Unquote(propValue.Text)));
+                                break;
+                        }
+                    }
                     switch (Utils.Unquote(propName.Text))
                     {
                         case "width":
@@ -49,6 +69,7 @@ namespace ConsoleApplication1
                         case "padding-left":
                         case "spacing":
                         case "minimum-width":
+                        case "minimum-height":
                         case "Frame.ClientInsetX":
                         case "Frame.ClientInsetY":
                         case "Frame.AutoSnapRange":
